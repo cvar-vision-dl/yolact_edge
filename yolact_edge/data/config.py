@@ -169,6 +169,16 @@ dataset_base = Config({
     'joint': None
 })
 
+copilot_dataset = dataset_base.copy({
+    'name' : 'CopilotDataset',
+    'train_info': './datasets/full_wide_dataset/corrected_train.json',
+    'valid_info': './datasets/full_wide_dataset/corrected_val.json',
+    'train_images': './datasets/full_wide_dataset',
+    'valid_images': './datasets/full_wide_dataset',
+    'label_map': COCO_LABEL_MAP,
+    'class_names': ('panel')
+})
+
 coco2014_dataset = dataset_base.copy({
     'name': 'COCO 2014',
     
@@ -798,6 +808,12 @@ yolact_edge_config = yolact_base_config.copy({
     'torch2trt_fpn': True,
     'torch2trt_prediction_module': True,
     'use_fast_nms': False
+})
+
+yolact_cvar_config = yolact_edge_config.copy({
+    'name': 'yolact_cvar',
+    'dataset': copilot_dataset,
+    'use_tensorrt_safe_mode': True
 })
 
 yolact_edge_mobilenetv2_config = yolact_edge_config.copy({

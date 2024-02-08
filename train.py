@@ -699,9 +699,9 @@ def setup_eval():
     eval_script.parse_args(['--no_bar', '--fast_eval', '--max_images='+str(args.validation_size)])
 
 if __name__ == '__main__':
-    if args.num_gpus is None:
-        args.num_gpus = torch.cuda.device_count()
-    if args.num_gpus > 1:
-        mp.spawn(train, nprocs=args.num_gpus, args=(args, ), daemon=False)
-    else:
+    # if args.num_gpus is None:
+    #     args.num_gpus = torch.cuda.device_count()
+    # if args.num_gpus > 1:
+    #     mp.spawn(train, nprocs=args.num_gpus, args=(args, ), daemon=False)
+    # else:
         train(0, args=args)

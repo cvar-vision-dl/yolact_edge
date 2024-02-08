@@ -398,12 +398,12 @@ class RandomSampleCrop(object):
             # using entire original input image
             None,
             # sample a patch s.t. MIN jaccard w/ obj in .1,.3,.4,.7,.9
-            (0.1, None),
-            (0.3, None),
-            (0.7, None),
-            (0.9, None),
+            0.1,
+            0.3,
+            0.7,
+            0.9,
             # randomly sample a patch
-            (None, None),
+            None,
         )
 
     def __call__(self, image, masks, boxes=None, labels=None, seeds=None, require_seeds=False):
@@ -411,6 +411,7 @@ class RandomSampleCrop(object):
         while True:
             # randomly choose a mode
             if seeds is None:
+                # print(self.sample_options)
                 mode = random.choice(self.sample_options)
             else:
                 mode = seeds[0]
@@ -422,7 +423,8 @@ class RandomSampleCrop(object):
                 else:
                     return image, masks, boxes, labels
 
-            min_iou, max_iou = mode
+            min_iou = mode
+            max_iou = None
             if min_iou is None:
                 min_iou = float('-inf')
             if max_iou is None:
@@ -681,12 +683,14 @@ class SwapChannels(object):
     
 class RandomShear(object):
     def __call__(self, image, mask, boxes, labels):
+
         height, width, _ = image.shape
         shear_factor_x = random.uniform(-0.3, 0.3)
         shear_factor_y = random.uniform(-0.3, 0.3)
         M = np.array([[1, shear_factor_x, 0], [shear_factor_y, 1, 0]])
         image = cv2.warpAffine(image, M, (width, height))
-        mask = cv2.warpAffine(mask, M, (width, height))
+ 
+        # mask = cv2.warpAffine(mask, M, (width, height))
         boxes = boxes.copy()
         boxes = np.array([[box[0] + shear_factor_x * box[1], box[1] + shear_factor_y * box[0], box[2] + shear_factor_x * box[3], box[3] + shear_factor_y * box[2]] for box in boxes])
         return image, mask, boxes, labels
