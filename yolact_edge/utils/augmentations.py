@@ -678,6 +678,18 @@ class SwapChannels(object):
         #     image = np.array(image)
         image = image[:, :, self.swaps]
         return image
+    
+class RandomShear(object):
+    def __call__(self, image, mask, boxes, labels):
+        height, width, _ = image.shape
+        shear_factor_x = random.uniform(-0.3, 0.3)
+        shear_factor_y = random.uniform(-0.3, 0.3)
+        M = np.array([[1, shear_factor_x, 0], [shear_factor_y, 1, 0]])
+        image = cv2.warpAffine(image, M, (width, height))
+        mask = cv2.warpAffine(mask, M, (width, height))
+        boxes = boxes.copy()
+        boxes = np.array([[box[0] + shear_factor_x * box[1], box[1] + shear_factor_y * box[0], box[2] + shear_factor_x * box[3], box[3] + shear_factor_y * box[2]] for box in boxes])
+        return image, mask, boxes, labels
 
 
 class PhotometricDistort(object):
@@ -906,6 +918,7 @@ class SSDAugmentation(object):
             enable_if(cfg.augment_random_mirror, RandomMirror()),
             enable_if(cfg.augment_random_flip, RandomFlip()),
             enable_if(cfg.augment_random_rot90, RandomRot90()),
+            enable_if(cfg.augment_random_shear, RandomShear()),
             Resize(),
             Pad(cfg.max_size, cfg.max_size, mean),
             ToPercentCoords(),
