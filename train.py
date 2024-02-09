@@ -91,7 +91,15 @@ parser.add_argument('--interrupt_no_save', dest='interrupt_no_save', action='sto
 parser.add_argument('--no_warmup_rescale', dest='warmup_rescale', action='store_false',
                     help='Do not rescale warmup coefficients on multiple GPU training.')
 
-parser.set_defaults(keep_latest=False)
+# parser.set_defaults(keep_latest=False)
+# args = parser.parse_args()
+from argparse import Namespace
+# debug_args = ["--save_interval", "10", 
+#               "--validation_size ","1", 
+#               "--log_folder ","logs", 
+#               "--config","yolact_cvar_config",
+#               "--num_workers","0", 
+#               "--batch_size","1"]
 args = parser.parse_args()
 
 if args.config is not None:
@@ -124,6 +132,11 @@ if torch.cuda.is_available():
         torch.set_default_tensor_type('torch.FloatTensor')
 else:
     torch.set_default_tensor_type('torch.FloatTensor')
+
+args.num_gpus = 1
+args.log_folder = "logs"
+args.config = "yolact_edge_config"
+args.dataset = "copilot_dataset"
 
 
 def multi_gpu_rescale(args):
@@ -704,4 +717,6 @@ if __name__ == '__main__':
     # if args.num_gpus > 1:
     #     mp.spawn(train, nprocs=args.num_gpus, args=(args, ), daemon=False)
     # else:
+
+        print(args)
         train(0, args=args)

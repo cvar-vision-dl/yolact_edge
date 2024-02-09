@@ -683,6 +683,9 @@ class SwapChannels(object):
     
 class RandomShear(object):
     def __call__(self, image, mask, boxes, labels):
+        print(type(mask))
+        print(mask[0])
+        print(mask.shape)
 
         height, width, _ = image.shape
         shear_factor_x = random.uniform(-0.3, 0.3)
